@@ -13,7 +13,7 @@ load_dotenv()
 
 app = FastAPI()
 
-# Allowing CORS for all origins (you can specify specific origins if needed)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # Update this list with the actual origins you want to allow
@@ -36,13 +36,15 @@ df_read = pd.read_csv("../server/src/synthetic_it_asset_data.csv")
 # Request models
 class PredictionRequest(BaseModel):
     Age_of_Asset: int
-    Maintenance_Cost_Ratio: float
+    Maintenance_Cost: float
+    Replacement_Cost: float
     Asset_Type: str
     Lifecycle_Status: str
 
 class RetirementRequest(BaseModel):
     Age_of_Asset: int
-    Maintenance_Cost_Ratio: float
+    Maintenance_Cost: float
+    Replacement_Cost: float
     Asset_Type: str
 
 @app.get("/")
@@ -55,16 +57,16 @@ def get_assets():
     return JSONResponse(content=json.loads(assets_json))
 
 @app.post("/predict/maintenance")
-def predict_maintenance(data: PredictionRequest):
+def predict_maintenance(data:PredictionRequest):
+    maintenance_cost_ratio = data.Maintenance_Cost / data.Replacement_Cost
     input_data = pd.DataFrame([{
         'Age of Asset': data.Age_of_Asset,
-        'Maintenance Cost Ratio': data.Maintenance_Cost_Ratio,
+        'Maintenance Cost Ratio':maintenance_cost_ratio,
         'Asset Type': data.Asset_Type,
         'Lifecycle Status': data.Lifecycle_Status
     }])
     
     prediction = maintenance_model.predict(input_data)[0]
-    
     return {"predicted_maintenance_cost": prediction}
 
 @app.post("/predict/acquisition")
@@ -76,7 +78,7 @@ def predict_acquisition(data: PredictionRequest):
     
     input_data = pd.DataFrame([{
         'Age of Asset': data.Age_of_Asset,
-        'Maintenance Cost Ratio': data.Maintenance_Cost_Ratio,
+        'Maintenance Cost Ratio': data.Maintenance_Cost / data.Replacement_Cost,
         'Avg Maintenance Cost': rows[0][2],
         'Maintenance Cost Trend': rows[0][3]
     }])
@@ -86,7 +88,7 @@ def predict_acquisition(data: PredictionRequest):
     return {"predicted_acquisition_cost": prediction}
 
 @app.post("/predict/retirement")
-def predict_retirement(data: RetirementRequest):
+def predict_retirement(data:PredictionRequest):
     query = "SELECT * FROM maintenance_table WHERE asset_type = %s"
     cur = conn.cursor()
     cur.execute(query, (data.Asset_Type,))
@@ -94,7 +96,7 @@ def predict_retirement(data: RetirementRequest):
     
     sample_data = {
         'Age of Asset': data.Age_of_Asset,
-        'Maintenance Cost Ratio': data.Maintenance_Cost_Ratio,
+        'Maintenance Cost Ratio': data.Maintenance_Cost / data.Replacement_Cost,
         'Avg Maintenance Cost': rows[0][2],
         'Maintenance Cost Trend': rows[0][3]
     }
