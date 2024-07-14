@@ -14,6 +14,21 @@ const AssetManagementWidget = () => {
     Maintenance_Cost: '',
   });
 
+  const [selectedIndexComponent, setSelectedIndexComponent] = useState(null);
+  const [selectedIndexManufacturer, setSelectedIndexManufacturer] = useState(null);
+  
+  const handleComponentTypeChange = (e) => {
+    const index = e.target.selectedIndex;
+    setSelectedIndexComponent(index);
+    handleInputChange(e);
+  };
+
+  const handleManufacturerChange = (e) => {
+    const index = e.target.selectedIndex;
+    setSelectedIndexManufacturer(index);
+    handleInputChange(e);
+  };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -33,11 +48,11 @@ const AssetManagementWidget = () => {
       Memory_Usage: parseFloat(formData.Memory_Usage),
       Temperature: parseFloat(formData.Temperature),
       Failure_Duration_Hours: parseInt(formData.Failure_Duration_Hours),
-      Maintenance_Activity: formData.Maintenance_Activity,
+      Maintenance_Activity: parseInt(formData.Maintenance_Activity), // Ensure it's parsed as an integer
       Maintenance_Cost: parseFloat(formData.Maintenance_Cost),
     };
 
-    axios.post('http://localhost:8000/', data)
+    axios.post('http://localhost:8000/predict/network', data)
       .then(response => {
         console.log(response.data);
       })
@@ -51,14 +66,14 @@ const AssetManagementWidget = () => {
       <h2 className="text-xl font-bold mb-4">Asset Management</h2>
       <form onSubmit={handleSubmit} className="w-full flex flex-col items-center">
       <div className="mb-6 w-1/3">
-          <label htmlFor="componentType" className="block text-lg font-medium text-gray-700 mb-2">
+          <label htmlFor="Component_Type" className="block text-lg font-medium text-gray-700 mb-2">
             Component Type
           </label>
           <select
-            id="componentType"
-            name="componentType"
-            value={formData.componentType}
-            onChange={handleInputChange}
+            id="Component_Type"
+            name="Component_Type"
+            value={formData.Component_Type}
+            onChange={handleComponentTypeChange}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-lg"
             required
           >
@@ -70,18 +85,18 @@ const AssetManagementWidget = () => {
           </select>
         </div>
         <div className="mb-6 w-1/3">
-          <label htmlFor="manufacturerType" className="block text-lg font-medium text-gray-700 mb-2">
-            Manufacturer Type
+          <label htmlFor="Manufacturer" className="block text-lg font-medium text-gray-700 mb-2">
+            Manufacturer
           </label>
           <select
-            id="manufacturerType"
-            name="manufacturerType"
-            value={formData.manufacturerType}
-            onChange={handleInputChange}
+            id="Manufacturer"
+            name="Manufacturer"
+            value={formData.Manufacturer}
+            onChange={handleManufacturerChange}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-lg"
             required
           >
-            <option value="">Select Manufacturer Type</option>
+            <option value="">Select Manufacturer</option>
             <option value="Cisco">Cisco</option>
             <option value="Juniper">Juniper</option>
             <option value="HP">HP</option>
@@ -101,7 +116,6 @@ const AssetManagementWidget = () => {
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-lg"
           />
         </div>
-
         <div className="mb-6 w-1/3">
           <label htmlFor="CPU_Usage" className="block text-lg font-medium text-gray-700 mb-2">
             CPU Usage
@@ -128,7 +142,6 @@ const AssetManagementWidget = () => {
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-lg"
           />
         </div>
-
         <div className="mb-6 w-1/3">
           <label htmlFor="Temperature" className="block text-lg font-medium text-gray-700 mb-2">
             Temperature
@@ -142,7 +155,6 @@ const AssetManagementWidget = () => {
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-lg"
           />
         </div>
-
         <div className="mb-6 w-1/3">
           <label htmlFor="Failure_Duration_Hours" className="block text-lg font-medium text-gray-700 mb-2">
             Failure Duration Hours
@@ -161,7 +173,7 @@ const AssetManagementWidget = () => {
             Maintenance Activity
           </label>
           <input
-            type="text"
+            type="number"
             id="Maintenance_Activity"
             name="Maintenance_Activity"
             value={formData.Maintenance_Activity}

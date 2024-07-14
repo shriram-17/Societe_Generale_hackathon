@@ -10,13 +10,8 @@ const Navbar = () => {
   return (
     <nav className="bg-white shadow-md">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-        <div className="text-xl font-bold">Societe Generale Hackathon</div>
-        <div className="hidden md:flex space-x-6">
-          <a href="#" className="text-gray-600 hover:text-gray-900">Home</a>
-          <a href="#" className="text-gray-600 hover:text-gray-900">About</a>
-          <a href="#" className="text-gray-600 hover:text-gray-900">Services</a>
-          <a href="#" className="text-gray-600 hover:text-gray-900">Contact</a>
-        </div>
+        <div className="text-xl font-bold">Societe Generale</div>
+     
         <div className="md:hidden">
           <button onClick={toggleMenu} className="focus:outline-none">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">

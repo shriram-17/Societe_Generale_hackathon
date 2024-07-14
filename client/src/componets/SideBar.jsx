@@ -12,7 +12,6 @@ const Sidebar = ({ onWidgetSelect }) => {
         <a href="#" onClick={() => handleLinkClick('overview')} className="block py-2.5 px-3 rounded transition duration-200 hover:bg-gray-700 hover:text-white">Overview</a>
         <a href="#" onClick={() => handleLinkClick('assetManagement')} className="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700 hover:text-white">Asset Management</a>
         <a href="#" onClick={() => handleLinkClick('networkPerformance')} className="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700 hover:text-white">Network Performance</a>
-        <a href="#" onClick={() => handleLinkClick('itOperations')} className="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700 hover:text-white">IT Operations</a>
       </nav>
     </div>
   );
