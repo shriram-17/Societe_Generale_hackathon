@@ -47,6 +47,17 @@ class RetirementRequest(BaseModel):
     Replacement_Cost: float
     Asset_Type: str
 
+class NetworkRequest(BaseModel):
+    Component_Type: str
+    Manufacturer: str
+    Traffic_Load: float
+    CPU_Usage: float
+    Memory_Usage: float
+    Temperature: float
+    Failure_Duration_Hours: int
+    Maintenance_Activity: str
+    Maintenance_Cost: float
+
 @app.get("/")
 def home_page():
     return {"Message": "Hello World"}
@@ -112,3 +123,8 @@ def predict_retirement(data:PredictionRequest):
     prediction = retirement_model.predict(df)[0]
     
     return {"predicted_retirement_time": labels[int(prediction)]}
+
+
+@app.post("/predict/network")
+def predict_newtork(data:NetworkRequest):
+    return {"message": "Data received successfully", "data": data.dict()}
